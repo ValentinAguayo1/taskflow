@@ -1,0 +1,72 @@
+<section class="task-form" aria-labelledby="task-form-title">
+  <div class="head">
+    <h2 id="task-form-title">
+      {{ isEditing() ? 'Editar tarea' : 'Nueva tarea' }}
+    </h2>
+    <p>
+      {{ isEditing()
+        ? 'Ajusta el detalle y la fecha si hace falta.'
+        : 'Añade algo concreto. Lo demás puede esperar.'
+      }}
+    </p>
+  </div>
+
+  <form (ngSubmit)="submit()">
+    <div class="field">
+      <label for="title">Título</label>
+      <input
+        id="title"
+        type="text"
+        name="title"
+        [(ngModel)]="title"
+        placeholder="Ej: Preparar demo de Angular"
+        required
+      />
+    </div>
+
+    <div class="field">
+      <label for="description">Notas</label>
+      <textarea
+        id="description"
+        name="description"
+        [(ngModel)]="description"
+        placeholder="Detalle opcional…"
+        rows="3"
+      ></textarea>
+    </div>
+
+    <div class="field">
+      <label for="dueDate">Fecha límite</label>
+      <input
+        id="dueDate"
+        type="date"
+        name="dueDate"
+        [(ngModel)]="dueDate"
+      />
+    </div>
+
+    @if (errorMessage()) {
+      <p class="error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    <div class="actions">
+      <button type="submit" class="submit" [disabled]="loading()">
+        {{ loading()
+          ? 'Guardando…'
+          : (isEditing() ? 'Guardar cambios' : 'Crear tarea')
+        }}
+      </button>
+
+      @if (isEditing()) {
+        <button
+          type="button"
+          class="cancel"
+          (click)="cancelEdit()"
+          [disabled]="loading()"
+        >
+          Cancelar
+        </button>
+      }
+    </div>
+  </form>
+</section>

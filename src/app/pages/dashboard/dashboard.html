@@ -1,0 +1,138 @@
+<div class="page">
+  <header class="topbar">
+    <div class="brand">
+      <p class="logo">Task<span>Flow</span></p>
+      <p class="tagline">Organiza. Avanza. Respira.</p>
+    </div>
+
+    <button type="button" class="ghost-btn" (click)="logout()">
+      Cerrar sesión
+    </button>
+  </header>
+
+  <main class="main">
+    <section class="intro">
+      <div class="intro-copy">
+        <h1>Mis tareas</h1>
+        <p class="intro-meta">
+          <span>{{ pendingTasks() }} pendientes</span>
+          <span aria-hidden="true">·</span>
+          <span>{{ completedTasks() }} hechas</span>
+          <span aria-hidden="true">·</span>
+          <span>{{ focusCount() }} para hoy</span>
+        </p>
+      </div>
+
+      <button type="button" class="focus-cta" (click)="startFocus()">
+        ¿Qué hago ahora?
+      </button>
+    </section>
+
+    @if (filter() === 'focus') {
+      <section class="focus-banner" aria-live="polite">
+        <div>
+          <h2>Modo Focus</h2>
+          <p>
+            Solo lo vencido y lo de hoy. Una cosa a la vez.
+          </p>
+        </div>
+        @if (nextFocusTask(); as next) {
+          <p class="next-up">
+            Siguiente: <strong>{{ next.title }}</strong>
+          </p>
+        }
+      </section>
+    }
+
+    <app-task-form
+      [taskToEdit]="editingTask()"
+      (saved)="clearEdit()"
+      (cancelled)="clearEdit()"
+    ></app-task-form>
+
+    @if (loading() && tasks().length === 0) {
+      <div class="state" role="status">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Cargando tus tareas…</p>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <p class="error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    @if (tasks().length === 0 && !loading()) {
+      <div class="state empty">
+        <h2>Todo despejado</h2>
+        <p>No hay pendientes. Crea una tarea arriba para empezar.</p>
+      </div>
+    }
+
+    @if (tasks().length > 0) {
+      <section class="tasks" id="tasks-panel" aria-label="Lista de tareas">
+        <div class="tasks-head">
+          <div>
+            <h2>
+              {{ filter() === 'focus' ? 'Hoy y vencidas' : 'En curso' }}
+            </h2>
+            @if (canReorder()) {
+              <p class="hint">Arrastra para priorizar. El orden se guarda.</p>
+            }
+          </div>
+
+          <div class="filters" role="group" aria-label="Filtrar tareas">
+            <button
+              type="button"
+              [class.active]="filter() === 'focus'"
+              (click)="setFilter('focus')"
+            >
+              Focus
+            </button>
+            <button
+              type="button"
+              [class.active]="filter() === 'all'"
+              (click)="setFilter('all')"
+            >
+              Todas
+            </button>
+            <button
+              type="button"
+              [class.active]="filter() === 'pending'"
+              (click)="setFilter('pending')"
+            >
+              Pendientes
+            </button>
+            <button
+              type="button"
+              [class.active]="filter() === 'completed'"
+              (click)="setFilter('completed')"
+            >
+              Hechas
+            </button>
+          </div>
+        </div>
+
+        @if (filteredTasks().length === 0) {
+          <div class="state empty compact">
+            @if (filter() === 'focus') {
+              <h2>Nada urgente hoy</h2>
+              <p>Buen momento para planear o adelantar sin presión.</p>
+            } @else {
+              <p>No hay tareas en este filtro.</p>
+            }
+          </div>
+        } @else {
+          <app-task-list
+            [tasks]="filteredTasks()"
+            [canReorder]="canReorder()"
+            [highlightFirst]="filter() === 'focus'"
+            (edit)="startEdit($event)"
+            (toggleFailed)="onListError('No se pudo actualizar la tarea.')"
+            (deleteFailed)="onListError('No se pudo eliminar la tarea.')"
+            (reorderFailed)="onListError('No se pudo guardar el orden.')"
+          ></app-task-list>
+        }
+      </section>
+    }
+  </main>
+</div>

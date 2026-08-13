@@ -1,0 +1,57 @@
+<ul class="task-list" [class.reordering]="reordering()">
+  @for (task of tasks(); track task.id; let i = $index) {
+    <li
+      class="task-row"
+      [class.completed]="task.completed"
+      [class.overdue]="isOverdue(task)"
+      [class.focus-next]="highlightFirst() && i === 0"
+      [attr.draggable]="canReorder()"
+      (dragstart)="onDragStart(i, $event)"
+      (dragover)="onDragOver($event)"
+      (drop)="onDrop(i, $event)"
+      (dragend)="onDragEnd()"
+    >
+      @if (canReorder()) {
+        <span class="grip" aria-hidden="true">⠿</span>
+      }
+
+      <button
+        type="button"
+        class="check"
+        [class.checked]="task.completed"
+        (click)="toggleTask(task)"
+        [attr.aria-label]="
+          task.completed
+            ? 'Marcar como pendiente'
+            : 'Marcar como completada'
+        "
+      >
+        @if (task.completed) {
+          <span aria-hidden="true">✓</span>
+        }
+      </button>
+
+      <div class="task-body">
+        <h3>{{ task.title }}</h3>
+        @if (task.description) {
+          <p>{{ task.description }}</p>
+        }
+        @if (task.dueDate) {
+          <p class="due" [class.late]="isOverdue(task)">
+            {{ isOverdue(task) ? 'Vencida' : 'Para' }}
+            {{ formatDueDate(task.dueDate) }}
+          </p>
+        }
+      </div>
+
+      <div class="task-actions">
+        <button type="button" class="edit" (click)="edit.emit(task)">
+          Editar
+        </button>
+        <button type="button" class="delete" (click)="deleteTask(task)">
+          Eliminar
+        </button>
+      </div>
+    </li>
+  }
+</ul>

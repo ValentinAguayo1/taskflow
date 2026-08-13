@@ -1,59 +1,112 @@
-# Taskflow
+# TaskFlow
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.3.
+A focused task manager built with **Angular** and **Firebase**. Capture work, set due dates, prioritize with drag-and-drop, and answer one question clearly: **what should I do now?**
 
-## Development server
+**Live demo:** [https://taskflow-878df.web.app](https://taskflow-878df.web.app)
 
-To start a local development server, run:
+---
+
+## Problem
+
+Most to-do apps turn into endless lists. You add tasks, mark a few done, and still lack a clear next action when time is limited.
+
+## Solution
+
+TaskFlow is built around urgency and priority:
+
+- Due dates and completion state
+- **Focus mode** — overdue + due today only
+- Manual priority via **drag-and-drop** (persisted `order` in Firestore)
+- Per-user auth with realtime sync
+
+Less noise. More closure.
+
+---
+
+## Highlights
+
+- **Focus / Today** — “What should I do now?” filters overdue and today’s tasks and highlights the next one.
+- **Persisted reorder** — drag tasks in the All view; order is saved with a Firestore batch write.
+- **Guards + Firestore Rules** — `authGuard` / `guestGuard` protect routes; security rules ensure users only read/write their own tasks.
+- **Realtime updates** — the list stays in sync through `onSnapshot` after create, complete, edit, delete, or reorder.
+
+---
+
+## Screenshots
+
+| Landing | Focus | Reorder |
+|--------|--------|---------|
+| ![Landing](docs/screenshots/01-landing.png) | ![Focus mode](docs/screenshots/02-focus.png) | ![Drag and drop](docs/screenshots/03-reorder.png) |
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | Angular 22 (standalone components, lazy routes, signals) |
+| Auth | Firebase Authentication (email / password) |
+| Database | Cloud Firestore (realtime listeners, batch writes) |
+| Hosting | Firebase Hosting |
+| Styles | SCSS with shared design tokens |
+
+---
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 20+
+- npm
+- A Firebase project with **Authentication** and **Firestore** enabled
+
+### Run locally
 
 ```bash
-ng serve
+npm install
+cp src/environments/environment.example.ts src/environments/environment.ts
+cp src/environments/environment.example.ts src/environments/environment.development.ts
+npm start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open [http://localhost:4200](http://localhost:4200).
 
-## Code scaffolding
+Fill in your Firebase web config in those two files (they are gitignored). Security rules live in `firestore.rules`.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+### Deploy
 
 ```bash
 ng build
+firebase deploy --only hosting
+
+# security rules
+firebase deploy --only firestore:rules
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## Project structure
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+```
+src/app/
+  pages/          landing, login, dashboard
+  components/     task-form, task-list
+  services/       auth, task
+  core/           firebase config, route guards
+  models/         Task model + Focus helpers
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## What this project demonstrates
 
-```bash
-ng e2e
-```
+- Modeling product UX in data (`order`, `dueDate`, Focus filtering)
+- Angular route guards with Firebase auth state
+- Client security paired with **Firestore Security Rules**
+- Realtime UI with signals (no Zone.js / no manual `ChangeDetectorRef`)
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
-## Additional Resources
+## License
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Portfolio project — free to explore and adapt.
