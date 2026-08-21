@@ -2,20 +2,80 @@
   <div class="atmosphere" aria-hidden="true"></div>
 
   <header class="nav">
-    <p class="logo">Task<span>Flow</span></p>
+    <a href="#inicio" class="logo">Task<span>Flow</span></a>
     <a routerLink="/login" class="nav-link">Entrar</a>
   </header>
 
-  <main class="hero">
-    <p class="brand">Task<span>Flow</span></p>
-    <h1>Menos ruido. Más cosas hechas.</h1>
-    <p class="lead">
-      Captura tareas, priorízalas y entra en Focus para saber qué hacer ahora.
-    </p>
+  <main>
+    <section class="hero" id="inicio">
+      <p class="brand">Task<span>Flow</span></p>
+      <h1>Menos ruido. Más cosas hechas.</h1>
+      <p class="lead">
+        Captura el trabajo, asigna una fecha y define el orden.
+        Focus muestra lo vencido y lo de hoy, y indica qué sigue.
+      </p>
 
-    <div class="cta">
-      <a routerLink="/login" class="primary">Empezar gratis</a>
-      <a routerLink="/login" class="secondary">Ya tengo cuenta</a>
-    </div>
+      <div class="cta">
+        <a routerLink="/login" class="primary">Empezar gratis</a>
+        <a routerLink="/login" class="secondary">Ya tengo cuenta</a>
+      </div>
+    </section>
+
+    <section class="features" aria-label="Qué incluye">
+      <article>
+        <h2>Modo Focus</h2>
+        <p>
+          Muestra lo vencido y lo de hoy. La siguiente acción queda al frente.
+        </p>
+      </article>
+      <article>
+        <h2>Prioridad</h2>
+        <p>
+          Tu decides el orden. Lo importante queda arriba.
+        </p>
+      </article>
+      <article>
+        <h2>Tuyo</h2>
+        <p>
+          Siempre disponible en tu cuenta.
+        </p>
+      </article>
+    </section>
+
+    <section class="howto" aria-labelledby="howto-title">
+      <h2 id="howto-title">Cómo funciona</h2>
+      <ol>
+        <li>
+          <span>1</span>
+          <div>
+            <h3>Captura</h3>
+            <p>Título, notas y fecha límite.</p>
+          </div>
+        </li>
+        <li>
+          <span>2</span>
+          <div>
+            <h3>Prioriza</h3>
+            <p>El orden lo decides tú, no la fecha de creación.</p>
+          </div>
+        </li>
+        <li>
+          <span>3</span>
+          <div>
+            <h3>¿Qué hago ahora?</h3>
+            <p>Focus concentra una sola tarea. El resto permanece en la lista.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="close">
+      <h2>Empieza en un minuto</h2>
+      <p>Crea una cuenta y empieza por lo de hoy.</p>
+      <div class="cta">
+        <a routerLink="/login" class="primary">Empezar gratis</a>
+        <a routerLink="/login" class="secondary">Ya tengo cuenta</a>
+      </div>
+    </section>
   </main>
 </div>

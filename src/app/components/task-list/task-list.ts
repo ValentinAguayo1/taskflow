@@ -1,7 +1,7 @@
 import { Component, inject, input, output, signal } from '@angular/core';
 
 import { TaskService } from '../../services/task';
-import { Task, isTaskOverdue } from '../../models/task';
+import { Task, isTaskOverdue, formatDueDate } from '../../models/task';
 
 @Component({
   selector: 'app-task-list',
@@ -15,7 +15,6 @@ export class TaskList {
 
   tasks = input.required<Task[]>();
   canReorder = input(false);
-  highlightFirst = input(false);
 
   edit = output<Task>();
   toggleFailed = output<void>();
@@ -98,11 +97,7 @@ export class TaskList {
   }
 
   formatDueDate(dueDate: string): string {
-    const [year, month, day] = dueDate.split('-').map(Number);
-    return new Date(year, month - 1, day).toLocaleDateString('es', {
-      day: 'numeric',
-      month: 'short'
-    });
+    return formatDueDate(dueDate);
   }
 
   isOverdue(task: Task): boolean {

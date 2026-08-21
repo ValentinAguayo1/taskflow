@@ -4,11 +4,11 @@
   <div class="login-shell">
     <header class="login-brand">
       <p class="logo">Task<span>Flow</span></p>
-      <h1>{{ isRegistering ? 'Crea tu espacio' : 'Sigue el flujo' }}</h1>
+      <h1>{{ isRegistering ? 'Crear cuenta' : 'Iniciar sesión' }}</h1>
       <p class="subtitle">
         {{ isRegistering
-          ? 'Regístrate y empieza a organizar lo que importa.'
-          : 'Entra para retomar tus tareas donde las dejaste.'
+          ? 'Regístrate para guardar tu lista.'
+          : 'Accede a tus tareas.'
         }}
       </p>
     </header>
@@ -34,7 +34,7 @@
           type="password"
           name="password"
           [(ngModel)]="password"
-          placeholder="Mínimo 6 caracteres"
+          placeholder="••••••••"
           [attr.autocomplete]="isRegistering ? 'new-password' : 'current-password'"
           required
         />
@@ -46,14 +46,14 @@
 
       <button type="submit" class="submit" [disabled]="loading">
         {{ loading
-          ? 'Un momento…'
+          ? 'Cargando…'
           : (isRegistering ? 'Crear cuenta' : 'Entrar')
         }}
       </button>
     </form>
 
     <p class="switch">
-      {{ isRegistering ? '¿Ya tienes cuenta?' : '¿Primera vez aquí?' }}
+      {{ isRegistering ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?' }}
       <button type="button" class="link" (click)="toggleMode()">
         {{ isRegistering ? 'Inicia sesión' : 'Regístrate' }}
       </button>

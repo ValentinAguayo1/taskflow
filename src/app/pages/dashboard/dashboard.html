@@ -13,7 +13,7 @@
   <main class="main">
     <section class="intro">
       <div class="intro-copy">
-        <h1>Mis tareas</h1>
+        <h1>{{ heading() }}</h1>
         <p class="intro-meta">
           <span>{{ pendingTasks() }} pendientes</span>
           <span aria-hidden="true">·</span>
@@ -23,32 +23,32 @@
         </p>
       </div>
 
-      <button type="button" class="focus-cta" (click)="startFocus()">
-        ¿Qué hago ahora?
-      </button>
+      <div class="intro-actions">
+        @if (filter() !== 'focus') {
+          <button type="button" class="focus-cta" (click)="startFocus()">
+            ¿Qué hago ahora?
+          </button>
+        }
+        @if (!formOpen()) {
+          <button
+            type="button"
+            class="ghost-btn"
+            (click)="filter() === 'focus' ? openTodayForm() : openForm()"
+          >
+            {{ filter() === 'focus' ? 'Añadir para hoy' : 'Añadir tarea' }}
+          </button>
+        }
+      </div>
     </section>
 
-    @if (filter() === 'focus') {
-      <section class="focus-banner" aria-live="polite">
-        <div>
-          <h2>Modo Focus</h2>
-          <p>
-            Solo lo vencido y lo de hoy. Una cosa a la vez.
-          </p>
-        </div>
-        @if (nextFocusTask(); as next) {
-          <p class="next-up">
-            Siguiente: <strong>{{ next.title }}</strong>
-          </p>
-        }
-      </section>
+    @if (formOpen()) {
+      <app-task-form
+        [taskToEdit]="editingTask()"
+        [initialDueDate]="draftDue()"
+        (saved)="closeForm()"
+        (cancelled)="closeForm()"
+      ></app-task-form>
     }
-
-    <app-task-form
-      [taskToEdit]="editingTask()"
-      (saved)="clearEdit()"
-      (cancelled)="clearEdit()"
-    ></app-task-form>
 
     @if (loading() && tasks().length === 0) {
       <div class="state" role="status">
@@ -61,22 +61,19 @@
       <p class="error" role="alert">{{ errorMessage() }}</p>
     }
 
-    @if (tasks().length === 0 && !loading()) {
-      <div class="state empty">
-        <h2>Todo despejado</h2>
-        <p>No hay pendientes. Crea una tarea arriba para empezar.</p>
-      </div>
-    }
-
-    @if (tasks().length > 0) {
+    @if (!loading() || tasks().length > 0) {
       <section class="tasks" id="tasks-panel" aria-label="Lista de tareas">
         <div class="tasks-head">
           <div>
             <h2>
-              {{ filter() === 'focus' ? 'Hoy y vencidas' : 'En curso' }}
+              @switch (filter()) {
+                @case ('focus') { Prioridad de hoy }
+                @case ('completed') { Cerradas }
+                @default { En curso }
+              }
             </h2>
             @if (canReorder()) {
-              <p class="hint">Arrastra para priorizar. El orden se guarda.</p>
+              <p class="hint">Arrastra para ordenar.</p>
             }
           </div>
 
@@ -84,6 +81,7 @@
             <button
               type="button"
               [class.active]="filter() === 'focus'"
+              [attr.aria-pressed]="filter() === 'focus'"
               (click)="setFilter('focus')"
             >
               Focus
@@ -91,20 +89,15 @@
             <button
               type="button"
               [class.active]="filter() === 'all'"
+              [attr.aria-pressed]="filter() === 'all'"
               (click)="setFilter('all')"
             >
               Todas
             </button>
             <button
               type="button"
-              [class.active]="filter() === 'pending'"
-              (click)="setFilter('pending')"
-            >
-              Pendientes
-            </button>
-            <button
-              type="button"
               [class.active]="filter() === 'completed'"
+              [attr.aria-pressed]="filter() === 'completed'"
               (click)="setFilter('completed')"
             >
               Hechas
@@ -112,20 +105,85 @@
           </div>
         </div>
 
-        @if (filteredTasks().length === 0) {
+        @if (filter() === 'focus') {
+          @if (currentFocus(); as current) {
+            <article class="focus-card" aria-live="polite">
+              <p class="kicker">
+                {{ isOverdue(current) ? 'Vencida' : 'Siguiente' }}
+              </p>
+              <h3>{{ current.title }}</h3>
+              @if (current.description) {
+                <p class="notes">{{ current.description }}</p>
+              }
+              @if (current.dueDate) {
+                <p class="due" [class.late]="isOverdue(current)">
+                  {{ isOverdue(current) ? 'Vencida' : 'Para' }}
+                  {{ formatDue(current.dueDate) }}
+                </p>
+              }
+
+              <div class="focus-actions">
+                <button type="button" class="focus-cta" (click)="completeFocus(current)">
+                  Hecha
+                </button>
+                @if (laterFocus().length > 0) {
+                  <button type="button" class="ghost-btn" (click)="skipCurrent()">
+                    Siguiente
+                  </button>
+                }
+                <button type="button" class="ghost-btn" (click)="startEdit(current)">
+                  Editar
+                </button>
+              </div>
+            </article>
+
+            @if (laterFocus().length > 0) {
+              <p class="queue-label">Después</p>
+              <app-task-list
+                [tasks]="laterFocus()"
+                (edit)="startEdit($event)"
+                (toggleFailed)="onListError('No se pudo actualizar la tarea.')"
+                (deleteFailed)="onListError('No se pudo eliminar la tarea.')"
+              ></app-task-list>
+            }
+          } @else {
+            <div class="state empty">
+              <h2>No hay nada con fecha para hoy</h2>
+              <p>Crea una tarea o asigna fecha a una existente.</p>
+              <div class="empty-actions">
+                <button type="button" class="focus-cta" (click)="openTodayForm()">
+                  Nueva para hoy
+                </button>
+              </div>
+              @if (undatedPending().length > 0) {
+                <ul class="undated">
+                  @for (task of undatedPending(); track task.id) {
+                    <li>
+                      <span>{{ task.title }}</span>
+                      <button type="button" (click)="markDueToday(task)">
+                        Para hoy
+                      </button>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+          }
+        } @else if (filteredTasks().length === 0) {
           <div class="state empty compact">
-            @if (filter() === 'focus') {
-              <h2>Nada urgente hoy</h2>
-              <p>Buen momento para planear o adelantar sin presión.</p>
+            @if (filter() === 'completed') {
+              <p>Aún no hay tareas completadas.</p>
+            } @else if (tasks().length === 0) {
+              <h2>Sin tareas</h2>
+              <p>Crea la primera para empezar.</p>
             } @else {
-              <p>No hay tareas en este filtro.</p>
+              <p>No hay tareas pendientes.</p>
             }
           </div>
         } @else {
           <app-task-list
             [tasks]="filteredTasks()"
             [canReorder]="canReorder()"
-            [highlightFirst]="filter() === 'focus'"
             (edit)="startEdit($event)"
             (toggleFailed)="onListError('No se pudo actualizar la tarea.')"
             (deleteFailed)="onListError('No se pudo eliminar la tarea.')"

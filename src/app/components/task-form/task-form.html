@@ -5,8 +5,8 @@
     </h2>
     <p>
       {{ isEditing()
-        ? 'Ajusta el detalle y la fecha si hace falta.'
-        : 'Añade algo concreto. Lo demás puede esperar.'
+        ? 'Actualiza título, notas o fecha.'
+        : 'Título, fecha y listo.'
       }}
     </p>
   </div>
@@ -19,7 +19,8 @@
         type="text"
         name="title"
         [(ngModel)]="title"
-        placeholder="Ej: Preparar demo de Angular"
+        placeholder="Revisar la propuesta del cliente"
+        maxlength="200"
         required
       />
     </div>
@@ -30,7 +31,8 @@
         id="description"
         name="description"
         [(ngModel)]="description"
-        placeholder="Detalle opcional…"
+        placeholder="Contexto, enlaces, criterios…"
+        maxlength="2000"
         rows="3"
       ></textarea>
     </div>
@@ -57,7 +59,6 @@
         }}
       </button>
 
-      @if (isEditing()) {
         <button
           type="button"
           class="cancel"
@@ -66,7 +67,6 @@
         >
           Cancelar
         </button>
-      }
     </div>
   </form>
 </section>

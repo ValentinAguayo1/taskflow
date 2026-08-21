@@ -86,6 +86,12 @@
   }
 }
 
+.intro-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .intro-meta {
   display: flex;
   flex-wrap: wrap;
@@ -112,38 +118,97 @@
   }
 }
 
-.focus-banner {
+.focus-card {
+  margin-bottom: 22px;
+  padding: 24px 22px;
+  border: 1px solid rgba(15, 118, 110, 0.35);
+  border-radius: 16px;
+  background: var(--surface);
+
+  .kicker {
+    margin: 0 0 8px;
+    color: var(--accent-deep);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 3vw, 1.9rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  .notes {
+    margin: 0 0 10px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+
+  .due {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-deep);
+
+    &.late {
+      color: var(--danger);
+    }
+  }
+}
+
+.focus-actions {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
-  padding: 16px 18px;
-  border: 1px solid rgba(15, 118, 110, 0.28);
-  border-radius: 14px;
-  background: var(--accent-soft);
+  gap: 8px;
+  margin-top: 20px;
+}
 
-  h2 {
-    margin: 0 0 4px;
-    font-family: var(--font-display);
-    font-size: 1.05rem;
-  }
+.queue-label {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
 
-  p {
-    margin: 0;
-    color: var(--ink-soft);
-    font-size: 0.9rem;
-  }
+.empty-actions {
+  margin-top: 14px;
+}
 
-  .next-up {
+.undated {
+  list-style: none;
+  width: min(100%, 420px);
+  margin: 18px 0 0;
+  padding: 0;
+  text-align: left;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+    color: var(--ink);
     font-size: 0.92rem;
+  }
+
+  button {
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
     color: var(--accent-deep);
+    font-weight: 650;
+    font-size: 0.84rem;
   }
 }
 
 .tasks {
-  margin-top: 36px;
+  margin-top: 28px;
 }
 
 .tasks-head {
@@ -280,8 +345,14 @@
     padding-top: 32px;
   }
 
-  .focus-cta {
+  .focus-cta,
+  .intro-actions {
     width: 100%;
+  }
+
+  .intro-actions .ghost-btn,
+  .intro-actions .focus-cta {
+    flex: 1;
   }
 
   .filters {

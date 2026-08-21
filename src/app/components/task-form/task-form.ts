@@ -25,6 +25,7 @@ export class TaskForm {
   private authService = inject(AuthService);
 
   taskToEdit = input<Task | null>(null);
+  initialDueDate = input<string | null>(null);
   saved = output<void>();
   cancelled = output<void>();
 
@@ -54,6 +55,8 @@ export class TaskForm {
       if (this.editingId() !== null) {
         this.resetForm();
       }
+
+      this.dueDate = this.initialDueDate() ?? '';
     });
   }
 

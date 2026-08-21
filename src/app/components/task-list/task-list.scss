@@ -34,9 +34,14 @@
     }
   }
 
-  &:hover {
+  &:hover,
+  &:focus-within {
     border-color: rgba(15, 118, 110, 0.35);
     transform: translateY(-1px);
+
+    .task-actions {
+      opacity: 1;
+    }
   }
 
   &.completed {
@@ -51,11 +56,6 @@
 
   &.overdue:not(.completed) {
     border-color: rgba(180, 35, 24, 0.28);
-  }
-
-  &.focus-next {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
   }
 }
 
@@ -131,6 +131,8 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 6px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
 }
 
 .edit,
@@ -154,6 +156,12 @@
 
 .delete {
   color: var(--danger);
+}
+
+@media (hover: none) {
+  .task-actions {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 640px) {
@@ -187,5 +195,6 @@
     grid-area: actions;
     flex-direction: row;
     justify-self: start;
+    opacity: 1;
   }
 }

@@ -4,7 +4,6 @@
       class="task-row"
       [class.completed]="task.completed"
       [class.overdue]="isOverdue(task)"
-      [class.focus-next]="highlightFirst() && i === 0"
       [attr.draggable]="canReorder()"
       (dragstart)="onDragStart(i, $event)"
       (dragover)="onDragOver($event)"
@@ -33,9 +32,6 @@
 
       <div class="task-body">
         <h3>{{ task.title }}</h3>
-        @if (task.description) {
-          <p>{{ task.description }}</p>
-        }
         @if (task.dueDate) {
           <p class="due" [class.late]="isOverdue(task)">
             {{ isOverdue(task) ? 'Vencida' : 'Para' }}

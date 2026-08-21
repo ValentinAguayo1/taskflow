@@ -9,7 +9,7 @@ export interface Task {
   userId: string;
 }
 
-export type TaskFilter = 'all' | 'pending' | 'completed' | 'focus';
+export type TaskFilter = 'all' | 'completed' | 'focus';
 
 export const TASKS_COLLECTION = 'tasks';
 
@@ -27,4 +27,12 @@ export function isTaskOverdue(task: Task, today = todayStamp()): boolean {
 
 export function isFocusTask(task: Task, today = todayStamp()): boolean {
   return !task.completed && !!task.dueDate && task.dueDate <= today;
+}
+
+export function formatDueDate(dueDate: string): string {
+  const [year, month, day] = dueDate.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString('es', {
+    day: 'numeric',
+    month: 'short'
+  });
 }
